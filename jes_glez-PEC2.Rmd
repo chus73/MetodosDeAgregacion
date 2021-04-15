@@ -361,6 +361,7 @@ library(plyr)
 library(ggplot2)
 library(tidyverse) 
 library(cluster)
+library(arules)
 #library(factoextra)
 ```
 
@@ -603,7 +604,40 @@ df[is.na.data.frame(df)== T, ]
 ```
 No presentando valores nulos el dataset
 
+Vamos a mirar el artista más escuchado.
 
+```{r}
+itemFrequencyPlot(df$artist)
+```
+
+
+### Aplicando Reglas de Asociación
+
+El algoritmo apriori nos indica el soporte, la confianza y el lift.
+- Soporte: Indica el número de transacciones encontradas en la regla de {lhs} sobre el total.
+- Confianza: Nos habla de la probabilidad de que la transacción que contiene {rhs} también encuentre los items de {lhs}. 
+- Lift: Nos indicará la aletoriedad en la regla.
+
+Lanzamos el algoritmo "apriori para generar las reglas del dataset con un mínimo de soporte del 1 % y una confianza mínima del 50 %.
+
+```{r}
+df_rules <- apriori(df[, 2:4], parameter = list(support = 0.01, confidence = 0.5))
+```
+
+Visualizamos las reglas ordenada por confianza en orden decreciente
+```{r}
+inspect(head(sort(df_rules, by='confidence')))
+```
+
+Si nos fijamos en las primeras reglas, nos describen a un varón de Fancia con una confianza del 83 % y en el segundo caso, un varón de Reino Unido con una confianza del 81 %. Lo que nos indican estas reglas, es que en estos países, la probabilidad de que el oyente sea varón es muy alta.
+
+
+```{r}
+inspect(head(sort(df_rules, by=c('support'))))
+#inspect(head(sort(df_rules, by=c('support', 'confidence'))))
+```
+Al ordenar por soporte, vemos que la gran mayoría de los oyentes lo componen hombres. Esto ya lo habíamos visto durante el análisis preliminar. 
+Lo interesante aquí es poder ver que existe un grupo de oyentes que lo forman varones de Estados unidos y que suponen casi el 14 % de la población.
 
 
 
