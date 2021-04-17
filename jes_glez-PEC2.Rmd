@@ -1,0 +1,1007 @@
+title: 'Minería de datos: PEC2'
+author: "Autor: Jesús González Leal"
+date: "Abril 2021"
+output:
+  html_document:
+    highlight: default
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+    includes:
+      in_header: 75.584-PEC-header.html
+  pdf_document:
+    highlight: zenburn
+    toc: yes
+  word_document: default
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+------------------------------------------------------------------------
+
+# Introducción
+
+------------------------------------------------------------------------
+
+## Presentación
+
+Esta prueba de evaluación continuada cubre los módulo 5 y 6 del programa de la asignatura.
+
+## Competencias
+
+Las competencias que se trabajan en esta prueba son:
+
+-   Uso y aplicación de las TIC en el ámbito académico y profesional
+-   Capacidad para innovar y generar nuevas ideas.
+-   Capacidad para evaluar soluciones tecnológicas y elaborar propuestas de proyectos teniendo en cuenta los recursos, las alternativas disponibles y las condiciones de mercado.
+-   Conocer las tecnologías de comunicaciones actuales y emergentes, así como saberlas aplicar convenientemente para diseñar y desarrollar soluciones basadas en sistemas y tecnologías de la información.
+-   Aplicación de las técnicas específicas de ingeniería del software en las diferentes etapas del ciclo de vida de un proyecto.
+-   Capacidad para aplicar las técnicas específicas de tratamiento, almacenamiento y administración de datos.
+-   Capacidad para proponer y evaluar diferentes alternativas tecnológicas para resolver un problema concreto.
+-   Capacidad de utilizar un lenguaje de programación.\
+-   Capacidad para desarrollar en una herramienta IDE.\
+-   Capacidad de plantear un proyecto de minería de datos.
+
+## Objetivos
+
+En esta PEC trabajaremos la generación, interpretación y evaluación de un modelo de agregación y de un modelo donde generaremos reglas de asociación con el software de practicas.
+No perderemos de vista las fases de preparación de los datos, calidad del modelo y extracción inicial del conocimiento.
+
+## Descripción de la PEC a realizar
+
+La prueba está estructurada en 2 ejercicios teóricos y 3 ejercicios prácticos.
+
+## Recursos
+
+Para realizar esta práctica recomendamos como punto de partida la lectura de los siguientes documentos:
+
+-   Módulos 5 y 6 del material didáctico.
+-   El aula laboratorio de R para resolver dudas o problemas.
+-   RStudio Cheat Sheet: Disponible en el aula Laboratorio de Minería de datos.
+-   R Base Cheat Sheet: Disponible en el aula Laboratorio de Minería de datos.
+
+## Formato y fecha de entrega
+
+El formato de entrega es: usernameestudiant-PAC1.html (pdf o word) y rmd.
+Fecha de Entrega: 21/04/2021.
+Se tiene que depositar la PEC en el buzón de entregas del aula.
+
+## Nota: Propiedad intelectual
+
+A menudo es inevitable, al producir una obra multimedia, hacer uso de recursos creados por terceras personas.
+Es por lo tanto comprensible hacerlo en el marco de una práctica de los estudios de Informática, Multimedia y Telecomunicación de la UOC, siempre y cuando esto se documente claramente y no suponga plagio en la práctica.
+
+Por lo tanto, al presentar una práctica que haga uso de recursos ajenos, se debe presentar junto con ella un documento en qué se detallen todos ellos, especificando el nombre de cada recurso, su autor, el lugar dónde se obtuvo y su estatus legal: si la obra está protegida por el copyright o se acoge a alguna otra licencia de uso (Creative Commons, licencia GNU, GPL ...).
+El estudiante deberá asegurarse de que la licencia no impide específicamente su uso en el marco de la práctica.
+En caso de no encontrar la información correspondiente tendrá que asumir que la obra está protegida por copyright.
+
+Deberéis, además, adjuntar los ficheros originales cuando las obras utilizadas sean digitales, y su código fuente si corresponde.
+
+------------------------------------------------------------------------
+
+# Ejercicio 1
+
+------------------------------------------------------------------------
+
+## Enunciado
+
+1.  Explica de forma resumida cual es el objetivo de los métodos de agregación. Relaciona la respuesta con un ejemplo.
+2.  Razona si tiene sentido aplicar un método de agregación al ejemplo que pusiste en la PEC1. Si lo tiene, comenta como se podría aplicar y que tipo de resultados se podrían obtener. Si no lo tiene, reformula el problema para que si lo tenga.
+
+## Respuesta ejercicio 1
+
+Escribe aquí la respuesta
+
+------------------------------------------------------------------------
+
+# Ejercicio 2
+
+------------------------------------------------------------------------
+
+## Enunciado
+
+1.  Explica de forma resumida cual es el objetivo de los métodos de generación de reglas de asociación. Relaciona la respuesta con un ejemplo.
+2.  Razona si tiene sentido aplicar un método de generación de reglas de asociación al ejemplo que pusiste en la PEC1. Si lo tiene, comenta como se podría aplicar y que tipo de resultados se podrían obtener. Si no lo tiene, reformula el problema para que si lo tenga.
+
+## Respuesta ejercicio 2
+
+Escribe aquí la respuesta
+
+------------------------------------------------------------------------
+
+# Ejercicio 3
+
+------------------------------------------------------------------------
+
+## Enunciado
+
+En este ejercicio seguiréis los pasos del ciclo de vida de un proyecto de minería de datos para el caso de un algoritmo de agregación.
+Lo haréis con el fichero *clientes.csv* que encontraréis adjunto.
+No hay que olvidarse de la fase de preparación y análisis de datos.
+Es muy importante explicar muy bien los resultados obtenidos.
+
+Los ejemplos 1 y 2 se pueden tomar como un punto de partida para la realización de este ejercicio, pero se espera que la respuesta proporcionada tenga un análisis más amplio al mostrado en estos ejemplos, prestando especial atención a explicar el conocimiento que se ha adquirido tras el proceso de minería de datos.
+
+## Ejemplo 1: Métodos de agregación con datos autogenerados
+
+En este ejemplo vamos a generar un conjunto de muestras aleatorias para posteriormente usar el algoritmo kmeans para agruparlas.
+Se crearán las muestras alrededor de dos puntos concretos.
+Por lo tanto, lo lógico será agrupar en dos clústers.
+Puesto que inicialmente, en un problema real, no se conoce cual es el número más idóneo de clústers k, vamos a probar primero con dos (el valor óptimo) y posteriormente con 4 y 8 clústers.
+Para evaluar la calidad de cada proceso de agregación vamos a usar la silueta media.
+La silueta de cada muestra evalúa como de bien o mal está clasificada la muestra en el clúster al que ha sido asignada.
+Para ello se usa una fórmula que tiene en cuenta la distancia a las muestras de su clúster y la distancia a las muestras del clúster vecino más cercano.
+
+A la hora de probar el código que se muestra, es importante tener en cuenta que las muestras se generan de forma aleatoria y también que el algoritmo kmeans tiene una inicialización aleatoria.
+Por lo tanto, en cada ejecución se obtendrá unos resultados ligeramente diferentes.
+
+Lo primero que hacemos es cargar la librería cluster que contiene las funciones que se necesitan
+
+```{r message= FALSE, warning=FALSE}
+library(cluster)
+```
+
+Generamos las muestras de forma aleatoria tomando como centro los puntos [0,0] y [5,5].
+
+```{r message= FALSE, warning=FALSE}
+n <- 150 # número de muestras
+p <- 2   # dimensión
+
+sigma <- 1 # varianza de la distribución
+mean1 <- 0 # centro del primer grupo
+mean2 <- 5 # centro del segundo grupo
+
+n1 <- round(n/2) # número de muestras del primer grupo
+n2 <- round(n/2) # número de muestras del segundo grupo
+
+x1 <- matrix(rnorm(n1*p,mean=mean1,sd=sigma),n1,p)
+x2 <- matrix(rnorm(n2*p,mean=mean2,sd=sigma),n2,p)
+```
+
+Juntamos todas las muestras generadas y las mostramos en una gráfica
+
+```{r message= FALSE, warning=FALSE}
+x  <- rbind(x1,x2)
+plot (x)
+```
+
+Como se puede comprobar las muestras están claramente separadas en dos grupos.
+Si se quiere complicar el problema se puede modificar los puntos centrales (mean1 y mean2) haciendo que estén más próximos y/o ampliar la varianza (sigma) para que las muestras estén más dispersas.
+
+A continuación vamos a aplicar el algoritmo kmeans con 2, 4 y 8 clústers
+
+```{r message= FALSE, warning=FALSE}
+fit2       <- kmeans(x, 2)
+y_cluster2 <- fit2$cluster
+
+fit4       <- kmeans(x, 4)
+y_cluster4 <- fit4$cluster
+
+fit8       <- kmeans(x, 8)
+y_cluster8 <- fit8$cluster
+```
+
+Las variables y_cluster2, y_cluster4 e y_cluster8 contienen para cada muestra el identificador del clúster a las que han sido asignadas.
+Por ejemplo, en el caso de los k=2 las muestras se han asignado al clúster 1 o al 2
+
+```{r message= FALSE, warning=FALSE}
+y_cluster2
+```
+
+Para visualizar los clústers podemos usar la función clusplot.
+Vemos la agrupación con 2 clústers
+
+```{r message= FALSE, warning=FALSE}
+clusplot(x, fit2$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
+```
+
+con 4
+
+```{r message= FALSE, warning=FALSE}
+clusplot(x, fit4$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
+```
+
+y con 8
+
+```{r message= FALSE, warning=FALSE}
+clusplot(x, fit8$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
+```
+
+También podemos visualizar el resultado del proceso de agregación con el siguiente código para el caso de 2 clústers
+
+```{r message= FALSE, warning=FALSE}
+plot(x[y_cluster2==1,],col='blue', xlim=c(min(x[,1]), max(x[,1])), ylim=c(min(x[,2]), max(x[,2])))
+points(x[y_cluster2==2,],col='red')
+```
+
+para 4
+
+```{r message= FALSE, warning=FALSE}
+
+plot(x[y_cluster4==1,],col='blue', xlim=c(min(x[,1]), max(x[,1])), ylim=c(min(x[,2]), max(x[,2])))
+points(x[y_cluster4==2,],col='red')
+points(x[y_cluster4==3,],col='green')
+points(x[y_cluster4==4,],col='black')
+```
+
+y para 8
+
+```{r message= FALSE, warning=FALSE}
+plot(x[y_cluster8==1,],col='blue', xlim=c(min(x[,1]), max(x[,1])), ylim=c(min(x[,2]), max(x[,2])))
+points(x[y_cluster8==2,],col='red')
+points(x[y_cluster8==3,],col='green')
+points(x[y_cluster8==4,],col='black')
+points(x[y_cluster8==5,],col='yellow')
+points(x[y_cluster8==6,],col='purple')
+points(x[y_cluster8==7,],col='cyan')
+points(x[y_cluster8==8,],col='orange')
+```
+
+Ahora vamos a evaluar la calidad del proceso de agregación.
+Para ello usaremos la función silhouette que calcula la silueta de cada muestra
+
+```{r message= FALSE, warning=FALSE}
+d  <- daisy(x) 
+sk2 <- silhouette(y_cluster2, d)
+sk4 <- silhouette(y_cluster4, d)
+sk8 <- silhouette(y_cluster8, d)
+```
+
+La función silhouette devuelve para cada muestra, el clúster dónde ha sido asignado, el clúster vecino y el valor de la silueta.
+Por lo tanto, calculando la media de la tercera columna podemos obtener una estimación de la calidad del agrupamiento
+
+```{r message= FALSE, warning=FALSE}
+mean(sk2[,3])
+mean(sk4[,3])
+mean(sk8[,3])
+```
+
+Como se puede comprobar, agrupar con dos clúster es mejor que en 4 o en 8, lo cual es lógico teniendo en cuenta como se han generado los datos.
+
+En este ejercicio no podemos sacar ninguna conclusión a partir de los clusters obtenidos puesto que los datos de partida no se corresponden con ningún problema real.
+En un ejemplo real tendríamos que analizar las agrupaciones obtenidas para obtener conocimiento sobre el problema a resolver.
+
+## Ejemplo 2: Métodos de agregación con datos reales
+
+A continuación vamos a ver otro ejemplo de cómo se usan los modelos de agregación.
+Para ello usaremos el fichero *flores.csv* que encontraréis adjunto.
+
+Cargamos el fichero y visualizamos la estructura de los datos
+
+```{r message= FALSE, warning=FALSE}
+library(cluster)
+flores_data<-read.csv("flores.csv", header=T, sep=",")
+colnames(flores_data) <- c("sepalLength", "sepalWidth", "petalLength", "petalWidth")
+summary(flores_data)
+```
+
+Como podemos comprobar tenemos cuatro características, la longitud y anchura del sépalo y la longitud y anchura del pétalo.
+
+Como inicialmente no conocemos el número óptimo de clústers, probamos con varios valores
+
+```{r message= FALSE, warning=FALSE}
+d <- daisy(flores_data) 
+resultados <- rep(0, 10)
+for (i in c(2,3,4,5,6,7,8,9,10))
+{
+  fit           <- kmeans(flores_data, i)
+  y_cluster     <- fit$cluster
+  sk            <- silhouette(y_cluster, d)
+  resultados[i] <- mean(sk[,3])
+}
+```
+
+Mostramos en un gráfica los valores de las siluetas media de cada prueba para comprobar que número de clústers es el mejor
+
+```{r message= FALSE, warning=FALSE}
+plot(2:10,resultados[2:10],type="o",col="blue",pch=0,xlab="Número de clusters",ylab="Silueta")
+```
+
+El mejor valor que se obtiene es k=2.
+
+Otro forma de evaluar cual es el mejor número de clústers es considerar el mejor modelo, aquel que ofrece la menor suma de los cuadrados de las distancias de los puntos de cada grupo con respecto a su centro (withinss), con la mayor separación entre centros de grupos (betweenss).
+Como se puede comprobar es una idea conceptualmente similar a la silueta.
+Una manera común de hacer la selección del número de clústers consiste en aplicar el método elbow (codo), que no es más que la selección del número de clústers en base a la inspección de la gráfica que se obtiene al iterar con el mismo conjunto de datos para distintos valores del número de clústers.
+Se seleccionará el valor que se encuentra en el "codo" de la curva
+
+```{r message= FALSE, warning=FALSE}
+resultados <- rep(0, 10)
+for (i in c(2,3,4,5,6,7,8,9,10))
+{
+  fit           <- kmeans(flores_data, i)
+  resultados[i] <- fit$tot.withinss
+}
+plot(2:10,resultados[2:10],type="o",col="blue",pch=0,xlab="Número de clusters",ylab="tot.tot.withinss")
+```
+
+En este caso el número óptimo de clústers es 3 o 4 que es cuando la curva comienza a estabilizarse.
+
+También se puede usar la función *kmeansruns* del paquete fpc que ejecuta el algoritmo kmeans con un conjunto de valores, para después seleccionar el valor del número de clústers que mejor funcione de acuerdo a dos criterios: la silueta media ("asw") y Calinski-Harabasz ("ch").
+
+```{r message= FALSE, warning=FALSE}
+library(fpc)
+fit_ch  <- kmeansruns(flores_data, krange = 1:10, criterion = "ch") 
+fit_asw <- kmeansruns(flores_data, krange = 1:10, criterion = "asw") 
+```
+
+Podemos comprobar el valor con el que se ha obtenido el mejor resultado y también mostrar el resultado obtenido para todos los valores de k usando ambos criterios
+
+```{r message= FALSE, warning=FALSE}
+fit_ch$bestk
+fit_asw$bestk
+
+plot(1:10,fit_ch$crit,type="o",col="blue",pch=0,xlab="Número de clústers",ylab="Criterio Calinski-Harabasz")
+plot(1:10,fit_asw$crit,type="o",col="blue",pch=0,xlab="Número de clústers",ylab="Criterio silueta media")
+
+```
+
+Los resultados son muy parecidos a los que hemos obtenido anteriormente.
+Con el criterio de la silueta media se obtienen 2 clústers y con el Calinski-Harabasz se obtienen 3.
+
+Como se ha comprobado, conocer el número óptimo de clústers no es un problema fácil.
+Tampoco lo es la evaluación de los modelos de agregación.
+
+Tras las pruebas que hemos realizado para obtener el número óptimo de clusters, hemos encontrado que el número de clusters varía según el método entre 2, 3 o 4.
+Vamos a estudiar los resultados encontrados con 2 y 3 clusters.
+
+A continuación mostramos visualmente los clusters encontrados suponiendo que hay 3 clusters.
+Hay que tener en cuenta que nos es posible mostrar los clusters en un espacio de 4 dimensiones.
+Por lo tanto, mostramos los clusters entre pares de caracteríticas:
+
+```{r message= FALSE, warning=FALSE}
+cl3 <- kmeans(flores_data, 3)
+with(flores_data, pairs(flores_data, col=c(1:4)[cl3$cluster])) 
+```
+
+La gráfica (que puede cambiar de una ejecución a otra por el factor aleatorio del kmeans) muestra claramente que hay un cluster que está más diferenciado de los otros dos.
+
+Una buena técnica que ayuda a entender los grupos que se han formado, es analizar las características de cada grupo:
+
+-   Grupo 1: Valores del pétalo alto. Longitud del sépalo alto.
+-   Grupo 2: Valores del pétalo bajos. Longitud del sépalo bajo.
+-   Grupo 3: Valores intermedios salvo en el ancho del sépalo que es intermedio.
+
+Vamos a ahora a estudiar los conjuntos que se han obtenido con 2 clusters:
+
+```{r message= FALSE, warning=FALSE}
+cl2 <- kmeans(flores_data, 2)
+with(flores_data, pairs(flores_data, col=c(1:4)[cl2$cluster])) 
+```
+
+En este caso se comprueba que existen dos grupos con un frontera bastante clara y que con los valores del pétalo tenemos suficiente para diferenciar los dos grupos.
+Podemos describir los dos grupos como:
+
+-   Grupo 1: Valores del pétalo bajos.
+-   Grupo 2: Valores del pétalo alto.
+
+Esto último lo podemos comprobar usando únicamente las dos características relacionadas con el pétalo:
+
+```{r message= FALSE, warning=FALSE}
+cl2b <- kmeans(flores_data[c(3,4)], 2)
+plot(flores_data[c(3,4)], col=cl2b$cluster)
+
+```
+
+## Respuesta ejercicio 3
+
+```{r}
+library(kableExtra)
+library(plyr)
+library(ggplot2)
+library(gridExtra)
+library(tidyverse) 
+library(cluster)
+library(arules)
+#library(factoextra)
+```
+
+```{r}
+# Lectura del fichero 
+df <- read.csv('clientes.csv', header = T, sep = ',', stringsAsFactors = T)
+print(paste('# de filas cargadas: ', nrow(df)))
+str(df)
+```
+
+Tenemos un dataset compuesto por 5 variables, una de ellas categórica binaria ('Genre'), y el resto numéricas.
+
+```{r}
+which(is.na.data.frame(df) ==T)
+```
+
+El dataset está también libre de valores nulos.
+Vamos a analizar las variables
+
+```{r}
+summary(df)
+```
+
+-   *Genre*: Vemos que el dataset presenta más muestras de la clase 'Female' que de 'Male'. Examinaremos esto visualmente.
+
+```{r}
+
+ggplot(df, aes(x=Genre, fill= Genre)) + geom_bar()
+print(table(df$Genre))
+```
+
+```{r}
+
+p1 <- ggplot(data=df,aes(x=Age, color=Age))+geom_boxplot()
+p2 <- ggplot(data=df,aes(x=Annual_Income_.k.., color=Annual_Income_.k..))+geom_boxplot()
+p3 <- ggplot(data=df,aes(x=Spending_Score, color=Spending_Score))+geom_boxplot()
+grid.arrange(p1, p2, p3, ncol=3, top= 'Boxplox Compare main attributes')
+
+```
+
+En el caso de la edad, vemos que la media se encuentra escorada hacia la derecha:
+
+```{r}
+summary(df$Age)[3:4]
+
+```
+
+No obstante, la diferencia de casi 3 años no representa una gran desviación de la muestra.
+El resto de variables se encuentran bastante centradas, aunque en los ingresos anuales vemos un dato extremo.
+Vamos a examinarlo en detalle.
+
+```{r}
+out <- boxplot(df$Annual_Income_.k..)$out
+out
+```
+
+Corresponden a dos valores de 137k de ingresos.
+Siendo un valor elevado, **no podemos considerarlo un error**, por lo que no tomaremos medidas adicionales.
+
+Examinemos ahora la distribución de los datos
+
+```{r}
+color <- "#404080"
+p1 <- ggplot(data=df,aes(x=Age, fill=Genre))+ geom_histogram(bins = 25, color=color)
+p2 <- ggplot(data=df,aes(x=Annual_Income_.k.., fill=Genre))+ geom_histogram(bins = 25, color=color)  
+p3 <- ggplot(data=df,aes(x=Spending_Score, fill=Genre))+ geom_histogram(bins = 25, color=color)
+grid.arrange(p1, p2, p3, ncol=2, top= 'Histogram distribution by Genre')
+```
+
+No se aprecia normalidad en las muestras.
+
+### Normalización
+
+Como paso siguiente vamos a aplicar una normalización z a todas las variables numéricas.
+La variable categórica de edad, al ser factor, ya se encuentra normalizada.
+La razón de aplicar la normalización, es que el algoritmo k-means sólo puede manejar variables continuas para poder calcular la media.
+
+Tenemos además que las variables siguen diferentes rangos.
+
+```{r}
+print('Valores extremos de Ingresos anuales: '); print(summary(df$Annual_Income_.k..)[c(1,6)])
+print('Valores extremos de Puntuación del gasto: '); print(summary(df$ Spending_Score)[c(1,6)])
+```
+
+Los algoritmos de clasificación se basan en distancias, es por esa razón que es importante que el rango de valores se encuentren alineados.
+
+```{r}
+#normalize <- function(x){
+#  return(x-min(x)/(max(x)-min(x)))
+#}
+#df.norm <- as.data.frame(apply(df[,c('Age', 'Annual_Income_.k..', 'Spending_Score')], 2,  normalize()))
+#head(df)
+
+df.norm <- as.data.frame(scale(df[,c('Age', 'Annual_Income_.k..', 'Spending_Score')], center = T, scale = T))
+#df.norm <- cbind(df[, 1:2], df.norm)
+#kable(head(df.norm), format = "markdown")
+head(df.norm)
+```
+
+### Clusterización
+
+Aplicamos el algoritmo de kmeans para la variable edad del dataset.
+Para la evaluación de la calidad del proceso de agregación utilizaremos la función silhouette.
+
+<https://uc-r.github.io/kmeans_clustering>
+
+```{r}
+# Semilla
+set.seed(123)
+
+max.k <- 8
+
+k_dist <- data.frame(matrix(ncol = 2, nrow = 0))
+d <- daisy(as.data.frame(df.norm$Age))
+for (k in 2: max.k){
+  fit.k <- kmeans(df.norm$Age, k,nstart = 25)
+  sk <- silhouette(fit.k$cluster, d)
+  k_dist <- rbind(k_dist, c(k, mean(sk[,3])))
+}
+names(k_dist) <- c('k', 'dist') 
+plot(k_dist[,1], k_dist[,2],
+      type = "b", pch = 19, frame = FALSE, 
+      xlab = "Number of clusters K",
+      ylab = "Average Silhouettes")  
+
+
+```
+
+Podemos encontrar como mejor agrupación a k=2.
+Comprobaremos el resultado visualmente
+
+```{r}
+k <- 2
+fit_2 <- kmeans(df.norm$Age, centers= k , nstart = 25)
+
+df.norm$k.2 <- fit_2$cluster
+ggplot(df.norm, aes(x=Age, y = Annual_Income_.k.., color=k.2)) + 
+  geom_point() 
+
+```
+
+Vemos una separación muy buena entre los dos conjuntos
+
+```{r}
+set.seed(1234)
+d <- daisy(df.norm)
+resultados.s <- rep(0,10)
+resultados.w <- rep(0,10)
+for (i in 2:10){
+  fit <- kmeans(df.norm, i)
+  y_cluster <- fit$cluster
+  sk <- silhouette(y_cluster, d)
+  resultados.s[i] <- mean(sk[,3])
+  resultados.w[i] <- sum(fit$withinss)
+}
+plot(2:10, resultados.s[2:10], type = "o", col="blue", pch=0, xlab= "Número de clusters", ylab="Método de la Silueta")
+#clusplot(as.data.frame(df.norm$Age), fit_2$cluster, color=T, shade = T)
+```
+
+```{r}
+ggplot() + geom_point(aes(x = 1:10, y = resultados.w), color = 'blue') + 
+  geom_line(aes(x = 1:10, y = resultados.w), color = 'blue') + 
+  ggtitle("Método del Codo") + 
+  xlab('Cantidad de Centroides k') + 
+  ylab('WCSS')
+```
+
+
+
+```{r}
+plot(2:10, resultados.w[2:10], type = "o", col="blue", pch=0, xlab= "Número de clusters", ylab="tot.Withinss")
+```
+
+```{r}
+cl2 <- kmeans(df.norm, 2)
+pairs(df.norm, col= cl2$cluster)
+```
+
+```{r}
+cl3 <- kmeans(df.norm, 3)
+pairs(df.norm, col= cl3$cluster)
+```
+
+```{r}
+cl4 <- kmeans(df.norm, 4)
+pairs(df.norm, col= cl4$cluster)
+```
+
+------------------------------------------------------------------------
+
+# Ejercicio 4
+
+------------------------------------------------------------------------
+
+## Enunciado
+
+En este ejercicio seguiréis los pasos del ciclo d[e vida de un proyecto de minería de datos para el caso de un algoritmo de generación de reglas de asociación.
+Lo haréis con el fichero *Lastfm.csv* que encontraréis adjunto.
+Este fichero contiene un conjunto de registros del histórico de las canciones que ha escuchado un usuario en un portal Web de música.
+"artist" es el nombre del grupo que ha escuchado, "sex" y "country" corresponden a variables que describen al usuario.
+
+El ejemplo 3 se pueden tomar como un punto de partida para la realización de este ejercicio, pero se espera que la respuesta proporcionda tenga un análisis más amplio al mostrado en este ejemplo, prestando especial atención a explicar el conocimiento que se ha adquirido tras el proceso de minería de datos.
+
+## Ejemplo 3: Métodos de generación de reglas de asociación
+
+En este ejemplo vamos trabajar el algoritmo "apriori" para obtener reglas de asociación a partir de un data set.
+Dichas reglas nos ayudarán a comprender cómo la información del data set se relaciona entre si.
+
+Para dicho objetivo vamos a trabajar el dataset de Groceries, que ya viene incluido con las librerías de arules.
+
+```{r message= FALSE, warning=FALSE}
+# install.packages("arules")
+library(arules)
+data("Groceries")
+```
+
+Para saber más sobre este dataset ejecutar el comando "?Groceries".
+
+Inspeccionamos el dataset y vemos que tiene un listado de elementos que fueron comprados juntos.
+Vamos a analizarlo un poco visualmente.
+
+```{r message= FALSE, warning=FALSE}
+inspect(head(Groceries, 5))
+```
+
+En el siguiente plot podemos ver que los tres elementos más vendidos son la leche entera, otras verduras y bollería.
+Dada la simplicidad del Dataset no se pueden hacer mucho más análisis.
+Pero para datasets más complejos miraríamos la frecuencia y distribución de todos los campos, en busca de posibles errores.
+
+```{r message= FALSE, warning=FALSE}
+itemFrequencyPlot(Groceries,topN=20,type="absolute")
+```
+
+Si lanzamos el algoritmo "apriori", generaremos directamente un set de reglas con diferente soporte, confianza y lift.
+El soporte indica cuantas veces se han encontrado las reglas {lsh =\> rhs} en el dataset, cuanto más alto mejor.
+La confianza habla de la probabilidad de que {rhs} se de en función de {lhs}.
+Y el lift es un parámetro que nos indica cuánto de aleatoriedad hay en las reglas.
+Un lift de 1 o menos es que las reglas son completamente fruto del azar.
+
+```{r message= FALSE, warning=FALSE}
+grocery_rules <- apriori(Groceries, parameter = list(support = 0.01, confidence = 0.5))
+
+inspect(head(sort(grocery_rules, by = "confidence"), 3))
+```
+
+Podemos probar a ordenar las reglas por los diferentes parámetros, para ver que información podemos obtener.
+
+```{r message= FALSE, warning=FALSE}
+inspect(head(sort(grocery_rules, by = "support"), 3))
+```
+
+Ordenando por support vemos que, con un lift de 2 y una confianza del 51%, podemos decir que la gente que en la misma compra hacía verduras y yogurt, compraban también leche entera.
+Hay que tener en cuenta que la leche entera es por otro lado el elemento más vendido de la tienda.
+
+```{r message= FALSE, warning=FALSE}
+inspect(head(sort(grocery_rules, by = "lift"), 3))
+```
+
+Por otro lado, si ordenamos por lift, vemos que con un soporte del 1% y una confianza del 58%, la gente que compra cítricos y tubérculos compra también verduras.
+
+Esta información nos puede ayudar a dar consejos a la dirección de la disposición de los elementos en la tienda o de que productos poner en oferta según lo que se ha comprado.
+Y si tuviéramos más información podríamos hacer análisis más profundos y ver que clientes compran exactamente qué.
+
+## Respuesta ejercicio 4
+
+### Carga de datos
+
+El dataset lo componen 289955 registros, repartidos en cuatro variables: user artist sex country
+
+```{r}
+df <- read.csv(file = 'lastfm.csv', header = T, sep = ',', stringsAsFactors = T)
+str(df)
+```
+
+Hemos cargado el fichero y convertido todas las variables categóricas a factor para tenerlas ya codificadas.
+
+### Data Preparation
+
+Vamos a visualizar las estadísticas básicas del dataset.
+
+```{r}
+summary(df)
+```
+
+De la primera observación se puede sacar que la variable user se encuentra bien centrada la media con respecto la serie.
+La variable sex, es binaria presentando una desproporción entre los valores femeninos y masculinos de aproximadamente 1 a 3.
+
+Miraremos si existen valores nulos en el dataset
+
+```{r}
+df[is.na.data.frame(df)== T, ]
+```
+
+No presentando valores nulos el dataset
+
+Vamos a mirar el artista más escuchado.
+
+```{r}
+#itemFrequencyPlot(df$artist)
+```
+
+### Aplicando Reglas de Asociación
+
+El algoritmo *"apriori"* nos indica el soporte, la confianza y el lift.
+- *Soporte*: Indica el número de transacciones encontradas en la regla de {lhs} sobre el total. Mide la frecuencia.
+- *Confianza*: Nos habla de la *probabilidad* de que la transacción que contiene {rhs} también encuentre los items de {lhs}. Por tanto, la confianza nos muestra la fortaleza de la regla.
+- *Lift*: Nos indicará la aletoriedad en la regla. Un lift igual a 1 o cercano a 1 indica que la relación es producto del azar. Un lift>1 implica una relación fuerte, mientras que un lift<=1 nos indica una relación trivial. 
+
+Lanzamos el algoritmo *"apriori"* para generar las reglas del dataset con un mínimo de soporte del 1 % y una confianza mínima del 50 %.
+
+```{r}
+df_rules <- apriori(df[, 2:4], parameter = list(support = 0.01, confidence = 0.5))
+```
+
+Visualizamos las reglas ordenada por confianza en orden decreciente
+
+```{r}
+inspect(head(sort(df_rules, by='confidence')))
+```
+
+Si nos fijamos en las primeras reglas, nos describen a un varón de Fancia con una confianza del 83 % y en el segundo caso, un varón de Reino Unido con una confianza del 81 %.
+Lo que nos indican estas reglas, es que en estos países, la probabilidad de que el oyente sea varón es muy alta.
+
+```{r}
+inspect(head(sort(df_rules, by=c('support'))))
+#inspect(head(sort(df_rules, by=c('support', 'confidence'))))
+```
+
+Al ordenar por soporte, vemos que la gran mayoría de los oyentes lo componen hombres.
+Esto ya lo habíamos visto durante el análisis preliminar.
+Lo interesante aquí es poder ver que existe un grupo de oyentes que lo forman varones de Estados unidos y que suponen casi el 14 % de la población.
+
+------------------------------------------------------------------------
+
+# Ejercicio 5
+
+------------------------------------------------------------------------
+
+## Enunciado
+
+Busca información sobre otros métodos de agregación diferentes al *k-means*.
+Partiendo del Ejercicio 3, probar el funcionamiento de al menos 2 métodos diferentes y comparar los resultados obtenidos.
+
+## Respuesta ejercicio 5
+
+
+
+
+### Agrupamiento jerárquico
+
+El método del agrupamiento jerárquico se basa en construir una jerarquía de grupos, basado en la semejanza de los datos. Utilizando el concepto de distancia entre los puntos, se calcula los puntos de entrada que se encuentra más cercanos entre ellos, por pares. El siguiente paso es es ir *agregando* nuevos grupos por cercanía. Para visualizar el funcionamiento de la clusterización, se suele utilizar el dendograma. En el diagrama, cada clase es visualizada por una línea vertical, la selección del número de clases idóneas es estima a partir del diagrama.
+
+Pertenece al conjunto de métodos llamado Hierarchical Clustering, y tienen la ventaja de que no se requiere conocer de antemano el número de clústers a utilizar, y además utiliza solamente la matriz de distancia, por lo que es independiente de las observaciones.
+
+Como parámetros críticos de configuración encontramos la función utilizada para el cálculo de la distancia, y el método de agrupamiento.
+
+A continuación podemos ver el dendograma del dataset normalizado del Ejercicio 3, utilizando la distáncia euclidiana y como método de agregación el criterio de Ward, basado en el decrecimiento de la varianza entre los grupos que van siendo mezclados.  
+
+```{r warning=FALSE}
+library(ggdendro)
+dendrogram <- hclust(dist(df.norm, method = 'euclidean'), method = 'ward.D')
+ggdendrogram(dendrogram, rotate = FALSE, labels = FALSE, theme_dendro = TRUE) + 
+  labs(title = "Dendrograma")
+```
+
+
+Fijándonos en el dendograma, encontramos las primeras agrupaciones formadas por los número de clases 2, 4, 5 y 6. 
+
+```{r}
+k <- c(2,4,5,6)
+agrupamientoJ <- hclust(dist(df.norm, method = 'euclidean'), method = 'ward.D')
+for (i in k){
+  clases_aj <- cutree(agrupamientoJ, k = i)
+  df.norm[, paste0('cluster.', i)] <- clases_aj
+}
+#clases_aj <- cutree(agrupamientoJ, k = 3)
+#df.norm$cluster <- clases_aj
+```
+
+Una vez generado los cluster, vamos a verlos representados
+
+```{r warning=FALSE}
+library(patchwork)
+p2 <- ggplot() + geom_point(aes(x = Age, y = Annual_Income_.k.., color = cluster.2), data = df.norm, size = 2) +
+  scale_colour_gradientn(colours=rainbow(4)) +
+  ggtitle('Clusters de Datos con k = 2') + 
+  xlab('Age') + ylab('Annual_Income')
+
+p4 <- ggplot() + geom_point(aes(x = Age, y = Annual_Income_.k.., color = cluster.4), data = df.norm, size = 2) +
+  scale_colour_gradientn(colours=rainbow(4)) +
+  ggtitle('Clusters de Datos con k = 4') + 
+  xlab('Age') + ylab('Annual_Income')
+p5 <- ggplot() + geom_point(aes(x = Age, y = Annual_Income_.k.., color = cluster.5), data = df.norm, size = 2) +
+  scale_colour_gradientn(colours=rainbow(4)) +
+  ggtitle('Clusters de Datos con k = 5') + 
+  xlab('Age') + ylab('Annual_Income')
+
+p6 <- ggplot() + geom_point(aes(x = Age, y = Annual_Income_.k.., color = cluster.6), data = df.norm, size = 2) +
+  scale_colour_gradientn(colours=rainbow(4)) +
+  ggtitle('Clusters de Datos con k = 6') + 
+  xlab('Age') + ylab('Annual_Income')
+
+(p2 | p4 ) / (p5 | p6) +  plot_annotation(title = 'Agrupamiento Jerárquico')
+```
+
+Aunque con una separación de dos grupos no se llega a obtenerse una separación perfecta entre los grupos, no vemos mejora al umentar el numero de clusteres. 
+
+
+Ver: https://rpubs.com/rdelgado/399475
+https://es.wikipedia.org/wiki/Agrupamiento_jer%C3%A1rquico
+
+
+### Clusterización mediante K-menoids (PAM)
+
+Es un método de agrupación muy similar al K-means, con la diferencia de que en K-menoids cada cluster se encuentra representado por una observación del cluster, el menoid, elemento del cluster cuya distancia promedio entre él y el resto de los elementos que integran la agrupación es mínima, siendo el elemento central de cluster.
+
+Con respecto a K-means, es un algoritmo más robusto y que se ve menos influenciado por el ruído presente en la serie. Como desventaja, encontramos que necesita de muchos recursos computacionales, por lo que en está desaconsejado en el caso de datasets grandes.
+
+Vamos a evaluar la reducción de la varianza para un valor máximo de k de 10. Al no apreciarse outliers en el dataset, utilizamos la distancia euclidea. Como estimador utilizamos la reducción de la suma total de los cuadrados de las diferencias internas.
+
+```{r warning=FALSE}
+library(cluster)
+library(factoextra)
+
+fviz_nbclust(x = df.norm, FUNcluster = pam, method = "wss", k.max = 10,
+             diss = dist(df.norm, method = "euclidean")) +
+geom_vline(xintercept = 4, linetype = 2)
+```
+Se aprecia que el mejor valor encontrado corresponde para un valor de k de 4, que es en donde la curva parece que comienza a suavizas su pendiente.
+
+Vamos a probar también con "silhouette" como estimador, tal y como hicimos con el método k-means del ejercicio 3.
+
+```{r}
+fviz_nbclust(x = df.norm, FUNcluster = pam, method = "silhouette", k.max = 10,
+             diss = dist(df.norm, method = "euclidean"))
+```
+En este caso, vemos que el mejor número de agrupaciones encontrado corresponde a 6.
+
+
+```{r}
+set.seed(1234)
+
+pam_clusters.k4 <- pam(x=df.norm, k= 4, metric = "euclidean")
+pam_clusters.k6 <- pam(x=df.norm, k= 6, metric = "euclidean")
+
+```
+
+
+```{r warning=FALSE}
+fviz_cluster(object = pam_clusters.k4, data = df.norm, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM, k=4") +
+  theme(legend.position = "none")
+```
+Vemos mucho solapamiento en el centro. Vamos a visualizar lo que se obtiene con 6 clusteres.
+
+```{r warning=FALSE}
+fviz_cluster(object = pam_clusters.k6, data = df.norm, ellipse.type = "t",
+             repel = TRUE) +
+  theme_bw() +
+  labs(title = "Resultados clustering PAM, k=6") +
+  theme(legend.position = "none")
+```
+
+Parece que con éste número de agrupaciones se ha conseguido una mejor diferenciacion entre los elementos que componen los grupos, sobretodo en el centro. 
+
+
+### Clusterización mediante CLARA
+
+Hemos visto que una de las debilidades de K-menoids se encuentra en el consumo de recursos. El algoritmo de CLARA (Clustering Large Applications) combina el concepto de K-menoids con el resampling, utilizando muestras aleatorias de un tamaño definido y aplicando el algoritmo de PAM (K-menoids). Este funcionamiento hace que se pueda usar en largos datasets.
+
+
+```{r warning=FALSE}
+set.seed(1234)
+
+clara_clusters.k4 <- clara(x = df.norm, k = 4, metric = "euclidean", stand = F,
+                        samples = 50, pamLike = TRUE)
+clara_clusters.k6 <- clara(x = df.norm, k = 6, metric = "euclidean", stand = F,
+                        samples = 50, pamLike = TRUE)
+```
+
+Como realizamos anteriormente, vamos a visualizar los resultados para cuatro agrupaciones
+
+```{r}
+fviz_cluster(object = clara_clusters.k4, ellipse.type = "t", geom = "point",
+             pointsize = 2.5) +
+  theme_bw() +
+  labs(title = "Resultados clustering CLARA con k=4") +
+  theme(legend.position = "none")
+```
+Vemos un resultado muy parecido al obtenido con k-menoids, lógico si sabemos que se basa en el mismo concepto.
+
+Probemos con el siguiente valor de agrupaciones.
+
+```{r}
+fviz_cluster(object = clara_clusters.k6, ellipse.type = "t", geom = "point",
+             pointsize = 2.5) +
+  theme_bw() +
+  labs(title = "Resultados clustering CLARA con k=6") +
+  theme(legend.position = "none")
+```
+Si comparamos los resultados obtenidos con CLARA, podemos apreciar que realizar 6 agrupaciones ayuda a clasificar mejor los valores que se encuentran en el centro.
+
+###  Clusterización mediante DBSCAN
+
+La idea detrás del algoritmo de cluesterización "Density based clustering" (DBSCAN), están en realizar las agrupaciones por regiones, según la densidad de las observaciones.
+
+A diferencia del resto de algorismos de particionado, que fallan al identificar formas arbitrarias, DBSCAN agrupa las observaciones en el cluster partiendo del principio de que tiene que haber un mínimo de obervaciones vecinas dentro de un radio próximo y de que los clústeres han de estar separados por reginos vacías o con pocas observaciones.
+
+Como ventajas del algoritmo DBSCAN tenemos que al contrario que los algoritmos vistos hasta ahora, no se requiere conocer el número de clusters. Además es independiente de la forma, no estando obligado a que sigan una forma redonda alrededor de un punto como K-means o K-menoids. Puede identificar a los outliers, por lo que es una algoritmo recomendado en datasets con ruído.
+
+Por contra, tenemos que es un algoritmo totalmente determinístico, teniendo mucha influencia en la asignación del cluster el orden de los datos. No funciona bien cuando la densidad de los puntos de observación no tiende a ser homogénea, ya que en ese caso se vuelve complejo encontrar los valores paramétricos utilizados por el algoritmo.
+
+El algoritmo necesita los siguientes parámetros de entrada:
+
+ - Epsilon (ϵ): radio que define la región vecina a una observación, también llamada ϵ-neighborhood. 
+
+ - Minimum points (minPts): El mínimo número de observaciones dentro de la región epsilon. Cuanto mayor sea el tamaño del dataset, más grande ha de ser este valor, no bajando nunca de 3.
+ 
+Vamos a encontrar el valor más óptimo para epsilon, utilizando 5 para minPts.  
+
+```{r warning=FALSE}
+set.seed(1234)
+library(fpc)
+library(dbscan)
+
+kNNdistplot(df.norm, k = 5) 
+
+```
+
+No queda muy claro que valor de epsilo escoger. Estaría entre 0.4 y 0.8, por lo que vamos a probar con diferentes valores y ver el resultado.
+
+```{r}
+dbscan_cluster.e04 <- fpc::dbscan(data = df.norm, eps = 0.4, MinPts = 5)
+dbscan_cluster.e06 <- fpc::dbscan(data = df.norm, eps = 0.6, MinPts = 5)
+dbscan_cluster.e08 <- fpc::dbscan(data = df.norm, eps = 0.8, MinPts = 5)
+
+p1 <- fviz_cluster(object = dbscan_cluster.e04, data = df.norm, stand = FALSE,
+             geom = "point", ellipse = FALSE, show.clust.cent = FALSE,
+             pallete = "jco") +
+  labs(title = "DBSCAN, con epsilon= 0,4") +
+  theme_bw(base_size = 9) +
+  theme(legend.position = "bottom")
+
+p2 <- fviz_cluster(object = dbscan_cluster.e06, data = df.norm, stand = FALSE,
+             geom = "point", ellipse = FALSE, show.clust.cent = FALSE,
+             pallete = "jco") +
+  labs(title = "DBSCAN, con epsilon= 0,6") +
+  theme_bw(base_size = 9) +
+  theme(legend.position = "bottom")
+
+p3 <- fviz_cluster(object = dbscan_cluster.e08, data = df.norm, stand = FALSE,
+             geom = "point", ellipse = FALSE, show.clust.cent = FALSE,
+             pallete = "jco") +
+  labs(title = "DBSCAN, con epsilon= 0,8") +
+  theme_bw(base_size = 9) +
+  theme(legend.position = "bottom")
+
+
+p1 | p2 | p3
+```
+
+Conforme se aumenta el valor de epsilon, al algoritmo le cuesta más diferenciar los clústeres, siendo el valor de 0,4 el que obtiene un diferenciación más alta entre los grupos de puntos. 
+
+
+Ver: https://www.cienciadedatos.net/documentos/37_clustering_y_heatmaps#Introducci%C3%B3n
+------------------------------------------------------------------------
+
+# Criterios de evaluación
+
+------------------------------------------------------------------------
+
+## Ejercicio 1 (20%)
+
+-   60%. Explicar de forma resumida cual es el objetivo de los métodos de agregación. Relacionar la respuesta con un ejemplo.
+-   40%. Razonar si tiene sentido aplicar un método agregación al ejemplo que pusiste en la PEC1. Si lo tiene, comentar como se podría aplicar y que tipo de resultados se podrían obtener. Si no lo tiene, reformular el problema para que si lo tenga.
+
+## Ejercicio 2 (20%)
+
+-   60%. Explicar de forma resumida cual es el objetivo de los métodos de generación de reglas de asociación. Relacionar la respuesta con un ejemplo.
+-   40%. Razonar si tiene sentido aplicar un método de generación de reglas de asociación al ejemplo que pusiste en la PEC1. Si lo tiene, comentar como se podría aplicar y que tipo de resultados se podrían obtener. Si no lo tiene, reformular el problema para que si lo tenga.
+
+## Ejercicio 3 (25%)
+
+-   20%. Se explican los campos de la base de datos, preparación y análisis de datos
+-   20%. Se aplica el algoritmo de agrupamiento de forma correcta y se prueban con diferentes valores de k.
+-   10%. Se obtiene una medida de lo bueno que es el agrupamiento.
+-   40%. Se ponen nombres a las asociaciones y se describen e interpretan los diferentes clústers obtenidos.
+-   10%. Se presenta el código y es fácilmente reproducible.
+
+## Ejercicio 4 (25%)
+
+-   10%. Se realiza un resumen de los datos incluidos en la base de datos.
+-   15%. Se preparan los datos de forma correcta.
+-   10%. Se aplica el algoritmo de reglas de asociación.
+-   20%. Se realizan diferentes pruebas variando algunos parámetros.
+-   35%. Se explican las conclusiones que se obtienen.
+-   10%. Se presenta el código y es fácilmente reproducible.
+
+## Ejercicio 5 (10%)
+
+-   25%. Se prueba un algoritmo diferente al kmeans.
+-   25%. Se prueba otro algoritmo diferente al kmeans.
+-   40%. Se comparan los resultados del kmeans y los otros dos métodos probados en este ejercicio.
+-   10%. Se presenta el código y es fácilmente reproducible.
+>>>>>>> nueva
