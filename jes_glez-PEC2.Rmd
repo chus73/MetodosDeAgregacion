@@ -106,7 +106,7 @@ Como ejemplo, tomemos un dataset formado por pacientes víctimas del cancer de m
  - Datos provenientes de la DGT
  - Datos de afectación metereológica.
  
-  El utilizar métodos de agregación con los datos nos puede servir para detectar desde el inicio las vías de tráfico que tienden a colapsarse y poder agruparlas por tipo de vía, comunidad, periodo(si se congenstionan en fin de semana, entre semana o tienden siempre al colapso). Ésto ya de entrada, nos va a permitir el  realizar un tipo de análisis descriptivo de los datos cuyo objetivo será extraer conclusiones para poder proponer planificaciones de mejora en las vías implicadas.
+  El utilizar métodos de agregación con los datos nos puede servir para detectar desde el inicio las vías de tráfico que tienden a colapsarse y poder agruparlas por tipo de vía, comunidad, periodo(si se congestionan en fin de semana, entre semana o tienden siempre al colapso). Ésto ya de entrada, nos va a permitir el  realizar un tipo de análisis descriptivo de los datos cuyo objetivo será extraer conclusiones para poder proponer planificaciones de mejora en las vías implicadas.
 
 ------------------------------------------------------------------------
 
@@ -121,7 +121,9 @@ Como ejemplo, tomemos un dataset formado por pacientes víctimas del cancer de m
 
 ## Respuesta ejercicio 2
 
-Escribe aquí la respuesta
+* 2.1 Las reglas de asociación buscan encontrar la dependencias entre los atributos de un conjunto de valores de un dataset, con el fin de poder establecer reglas entre ellos. En este dominio, una transacción  se refiere a cada grupo de eventos asociados. Así por ejemplo, analizando los metadatos asociados a las compras de un portal de ventas por internet, podemos definir la transacción T como la venta de un usuario, con los siguientes itemsets (Pais origen de la IP, artículo visitado, compra(S/N), tiempo visita). En este escenario, una regla de asociación que se podría descubrir sería del tipo "si Pais = España entonces visitas {lista de artículos o familia de artículos visitados}.
+
+2.2 Usar las reglas de asociación en el ejemplo de la anterior PAC podría servir para encontrar aquellas relaciones ocultas entre las diferentes rutas de la red de carreteras del estado. Así, nos puede ayudar a determinar si la congestión de una determinada vía puede influir en que se produzca una saturación en otras.
 
 ------------------------------------------------------------------------
 
