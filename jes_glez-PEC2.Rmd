@@ -17,6 +17,7 @@ output:
 editor_options: 
   markdown: 
     wrap: sentence
+    
 ---
 
 ```{r setup, include=FALSE}
@@ -96,7 +97,16 @@ Deberéis, además, adjuntar los ficheros originales cuando las obras utilizadas
 
 ## Respuesta ejercicio 1
 
-Escribe aquí la respuesta
+* 1.1 Los métodos de agregación buscan la agrupación de los datos bajo el criterio de proximidad o distancia. Se busca agruparlos de manera que todos los componentes del grupo (o cluster), tengan caracterisiticas comunes y al mismo tiempo que ese grupo sea lo más diferente posible al resto de grupos. 
+
+Como ejemplo, tomemos un dataset formado por pacientes víctimas del cancer de mama. Las observaciones incluirán datos referentes al estilo de vida de la paciente, si es o no fumadora, el peso, la altura, y de allí podemos estimar su índice de masa corporal, hipertensión, si práctica deporte con asiduidad y durante cuanto tiempo. El empleo de algún método de agregación, nos va a permitir conocer como se agrupan las observaciones del dataset, el grupo más mayoritario, y si los grupos están separados entre ellos, o más bien, si tenemos mezclas. No estamos ante un algoritmo que nos ayude a predecir a priori, pero si podemos conocer cuales son las características principales de los grupos con más observaciones.
+
+* 1.2 En el ejemplo planteado en la anterior PEC, se buscaba conocer el movimiento del tráfico con el fin de poder predecir la saturación de la red de carreteras y autovías del estado. Para se utilizaba diferentes fuentes de datos:
+ - Datos de las operadoras principales de telefonía móbil.
+ - Datos provenientes de la DGT
+ - Datos de afectación metereológica.
+ 
+  El utilizar métodos de agregación con los datos nos puede servir para detectar desde el inicio las vías de tráfico que tienden a colapsarse y poder agruparlas por tipo de vía, comunidad, periodo(si se congenstionan en fin de semana, entre semana o tienden siempre al colapso). Ésto ya de entrada, nos va a permitir el  realizar un tipo de análisis descriptivo de los datos cuyo objetivo será extraer conclusiones para poder proponer planificaciones de mejora en las vías implicadas.
 
 ------------------------------------------------------------------------
 
